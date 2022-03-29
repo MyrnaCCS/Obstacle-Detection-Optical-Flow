@@ -3,13 +3,14 @@ import cv2
 import sys
 import os
 from sklearn.cluster import MeanShift
+from sklearn.cluster import AgglomerativeClustering
 
 from KeyPointsClassification import KeyPointsClassification
 from ShowResults import *
 sys.path.append('../')
 
 class ObstacleDetector(object):
-	"""docstring for ObstacleDetector"""
+	"""This class returns the bounding boxes of the obstacles in the image sequence"""
 	def __init__(self, img_size, tolerance, corner_selection_strategy, geometric_transformation, corner_classification_strategy):
 		self.rows = img_size[0]
 		self.cols = img_size[1]
@@ -20,6 +21,11 @@ class ObstacleDetector(object):
 
 	def clustering_mean_shift(self, points_no_match, band_width):
 		clustering = MeanShift(bandwidth=band_width).fit(points_no_match)
+		unique_label = set(clustering.labels_)
+		return clustering.labels_, unique_label
+
+	def clustering_hierarchical(self, points_no_match, thresh_distance):
+		clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=thresh_distance, linkage='ward', affinity='euclidean').fit(np.asarray(Y))
 		unique_label = set(clustering.labels_)
 		return clustering.labels_, unique_label
 
@@ -66,11 +72,17 @@ class ObstacleDetector(object):
 			# Draw clusters
 			draw_clusters(img_old, no_match, labels, unique_label, file_save_name)
 			# Draw boxes
-			boxes = self.get_bounding_boxes(no_match, labels, unique_label,10)
-			#Save image res boxes
+			boxes = self.get_bounding_boxes(no_match, labels, unique_label, 10)
+			# Save image res boxes
 			draw_box_obstacle(img_old, boxes, file_save_name)
 			return boxes
 		else:
+			# Draw clusters
+			cv2.imshow('Clusters', img_old)
+			cv2.waitKey(10)
 			cv2.imwrite(os.path.join('clusters', file_save_name), img_old)
+			# Save image res boxes
 			cv2.imwrite(os.path.join('bboxes', file_save_name), img_old)
+			cv2.imshow('Obstacles', img_old)
+			cv2.waitKey(10)
 			return []

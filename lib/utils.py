@@ -3,20 +3,14 @@ import cv2
 
 def count_outliers(no_match_points, img_rows, img_cols, rows, cols):
   counter = np.zeros((rows*cols))
-  roi_rows = img_rows//rows
-  roi_cols = img_cols//cols
+  roi_rows = img_rows // rows
+  roi_cols = img_cols // cols
   n = len(no_match_points)
   for i in range(n):
     col, row = no_match_points[i]
-    if col < 0:
-      col = 0
-    elif col >= img_cols:
-      col = cols-1
-    if row < 0:
-      row = 0
-    elif row >= img_rows:
-      row = rows-1
-    index = cols*(int(row)//roi_rows)+(int(col)//roi_cols)
+    col = min(img_cols-1, max(0, col))
+    row = min(img_rows-1, max(0, row))
+    index = cols * (int(row) // roi_rows) + (int(col) // roi_cols)
     counter[index] += 1
   return counter
 
@@ -52,7 +46,7 @@ def compute_correlation(points_old, img_old, img_current, patch_size, H):
       correlation[k] = 0.0
       continue
     else:
-      patch_old[:, :] = img_old[row-patch_size_half:row+patch_size_half+1, col-patch_size_half:col+patch_size_half+1]
+      patch_old[...] = img_old[row-patch_size_half:row+patch_size_half+1, col-patch_size_half:col+patch_size_half+1]
 
     # Proyectar patch
     patch_curr = np.zeros((patch_size, patch_size), dtype = np.float32)
@@ -63,8 +57,8 @@ def compute_correlation(points_old, img_old, img_current, patch_size, H):
         point_old[0, 0] = col-patch_size_half+i
         point_old[0, 1] = row-patch_size_half+j
         point_curr = project_points_with_homography(point_old, H)
-        index_row = int(point_curr[0, 1]+0.5)
-        index_col = int(point_curr[0, 0]+0.5)
+        index_row = round(point_curr[0, 1])
+        index_col = round(point_curr[0, 0])
         if index_row >= rows or index_col >= cols or index_row < 0 or index_col < 0:
           patch_curr[j, i] = patch_old[j, i]
         else:

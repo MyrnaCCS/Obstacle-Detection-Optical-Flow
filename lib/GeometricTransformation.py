@@ -4,7 +4,7 @@ import random
 from utils import project_points_with_homography
 
 class GeometricTransformation(object):
-	"""docstring for GeometricTransformation"""
+	"""This class returns the homography computed by RANSAC algorithm"""
 	def __init__(self, tolerance):
 		self.tol = tolerance
 		self.homography = None
@@ -68,7 +68,7 @@ class GeometricTransformation(object):
 		return u_planar_best
 
 class AffineTransformation(GeometricTransformation):
-	"""docstring for AffineTransformation"""
+	"""This class returns the affine transformation computed by RANSAC algorithm"""
 	def __init__(self, tolerance):
 		super(AffineTransformation, self).__init__(tolerance)
 	
