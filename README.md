@@ -32,16 +32,16 @@ To test diferent key points selection, edit the variable `key_points_selector` i
 
 # Result
 
-Optical Flow:
+Optical Flow:  
 <img src="assets/optical_flow.gif" width="240">
 
-Planar Flow:
+Planar Flow:  
 <img src="assets/planar_flow.gif" width="240">
 
-Obstacle key points (RED):
+Obstacle key points (RED):  
 <img src="assets/points.gif" width="240">
 
-Bounding boxes:
+Bounding boxes:  
 <img src="assets/bboxes.gif" width="240">
 
 Contact:myrna.castillo.silva@gmail.com
